@@ -10,6 +10,9 @@ const MainSection = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [voiceName, setVoiceName] = useState<string>('');
 
+  const [voiceId, setVoiceId] = useState('')
+  const [isVoiceUploaded, setIsVoiceUploaded] = useState(false)
+
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -46,7 +49,8 @@ const MainSection = () => {
     if (selectedFile && voiceName) {
       try {
         const voiceId = await addVoice(voiceName, selectedFile);
-        console.log("Successfully uploaded voice with ID:", voiceId);
+        setIsVoiceUploaded(true)
+        setVoiceId(voiceId)
       } catch (error) {
         console.error("Error uploading voice:", error);
       }
@@ -90,6 +94,20 @@ const MainSection = () => {
             Upload Voice
           </Button>
         </div>
+      )}
+
+      {isVoiceUploaded && voiceId ? (
+        <div className='mt-16'>
+           <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
+              Voice uploaded!
+            </h2>
+
+            <p className="leading-7 [&:not(:first-child)]:mt-2 border-b pb-2">
+              Voice ID : {voiceId}
+            </p>
+        </div>
+      ) : (
+        <></>
       )}
     </div>
   );
