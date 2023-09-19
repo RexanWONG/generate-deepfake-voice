@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 export const XI_API_KEY = process.env.NEXT_PUBLIC_XI_API_KEY;
 
 export const addVoice = async (name, audioFile) => {
@@ -20,5 +22,29 @@ export const addVoice = async (name, audioFile) => {
     return voice_id;
   } catch (error) {
     console.error(error);
+  }
+};
+
+export const generateTextToSpeech = async (voice_id, text) => {
+  try {
+    const options = {
+      method: 'POST',
+      url: `https://api.elevenlabs.io/v1/text-to-speech/${voice_id}`,
+      headers: {
+        accept: 'audio/mpeg', 
+        'content-type': 'application/json', 
+        'xi-api-key': `${XI_API_KEY}`,
+      },
+      data: {
+        text: text, 
+      },
+      responseType: 'arraybuffer'
+    };
+  
+    const speechDetails = await axios.request(options);
+  
+    return speechDetails.data;
+  } catch (error) {
+    console.error(error)
   }
 };

@@ -3,8 +3,9 @@
 import { useState, useRef } from 'react';
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
 
-import { addVoice } from '@/app/api';
+import { addVoice, generateTextToSpeech } from '@/app/api';
 
 const MainSection = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -12,6 +13,7 @@ const MainSection = () => {
 
   const [voiceId, setVoiceId] = useState('')
   const [isVoiceUploaded, setIsVoiceUploaded] = useState(false)
+  const [textToGenerate, setTextToGenerate] = useState('')
 
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -53,6 +55,28 @@ const MainSection = () => {
         setVoiceId(voiceId)
       } catch (error) {
         console.error("Error uploading voice:", error);
+      }
+    }
+  };
+
+  const handleGenerateTextToSpeech = async () => {
+    if (isVoiceUploaded && voiceId && textToGenerate) {
+      try {
+        const audioFile = await generateTextToSpeech(voiceId, textToGenerate);
+        console.log("Done : ", audioFile)
+        
+        if (audioFile && audioRef.current) {
+          const blob = new Blob([audioFile], { type: 'audio/mpeg' });
+  
+          const url = URL.createObjectURL(blob);
+  
+          console.log(url)
+
+          audioRef.current.src = url;
+          audioRef.current.play(); 
+        }
+      } catch (error) {
+        console.error("Error generating text-to-speech:", error);
       }
     }
   };
@@ -105,6 +129,26 @@ const MainSection = () => {
             <p className="leading-7 [&:not(:first-child)]:mt-2 border-b pb-2">
               Voice ID : {voiceId}
             </p>
+
+
+            <div className='mt-10'>
+              <Label>Try out your deepfake voice : </Label>
+              <Input 
+                id="textToGenerate"
+                type="text"
+                placeholder="Type or paste text here.  The model works best on longer fragments"
+                value={textToGenerate}
+                onChange={e => setTextToGenerate(e.target.value)}
+              />
+
+              <Button onClick={handleGenerateTextToSpeech} className="hover:bg-blue-500 mt-5 w-full">
+                Generate
+              </Button>
+
+              <div className='mt-5'>
+                <audio ref={audioRef} />
+              </div>
+            </div>
         </div>
       ) : (
         <></>
