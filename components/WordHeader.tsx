@@ -11,6 +11,9 @@ const WordHeader = () => {
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
           Your voice {'<>'} deepfake voice
         </h1>
+        <p className="[&:not(:first-child)]:mt-6">
+          By <a href="https://linktr.ee/rexanwong">Rexan Wong</a>
+        </p>
 
         <Accordion type="single" collapsible className="mt-5">
           <AccordionItem value="item-1">
