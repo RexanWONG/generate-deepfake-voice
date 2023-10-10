@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useRef } from 'react';
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -10,12 +8,12 @@ import { addVoice, generateTextToSpeech } from '@/app/api';
 const MainSection = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [voiceName, setVoiceName] = useState<string>('');
-
   const [voiceId, setVoiceId] = useState('')
   const [isVoiceUploaded, setIsVoiceUploaded] = useState(false)
   const [textToGenerate, setTextToGenerate] = useState('')
-
   const [isPlaying, setIsPlaying] = useState(false);
+  const [error, setError] = useState<string>('');
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,6 +53,7 @@ const MainSection = () => {
         setVoiceId(voiceId)
       } catch (error) {
         console.error("Error uploading voice:", error);
+        setError("Error uploading voice. Please try again.");
       }
     }
   };
@@ -77,12 +76,18 @@ const MainSection = () => {
         }
       } catch (error) {
         console.error("Error generating text-to-speech:", error);
+        setError("Error generating text-to-speech. Please try again.");
       }
     }
   };
   
   return (
     <div className="flex flex-col">
+      {error && (
+        <div className="bg-red-500 text-white p-4 mb-4">
+          {error}
+        </div>
+      )}
       <div className='flex flex-row items-center justify-center'>
         <h4 className="scroll-m-20 text-xl font-semibold tracking-tight w-full">
           Insert your audio file here :
@@ -127,16 +132,16 @@ const MainSection = () => {
             </h2>
 
             <p className="leading-7 [&:not(:first-child)]:mt-2 border-b pb-2">
-              Voice ID : {voiceId}
+Voice ID: {voiceId}
             </p>
 
 
             <div className='mt-10'>
-              <Label>Try out your deepfake voice : </Label>
+              <Label>Try out your deepfake voice:</Label>
               <Input 
                 id="textToGenerate"
                 type="text"
-                placeholder="Type or paste text here.  The model works best on longer fragments"
+                placeholder="Type or paste text here. The model works best on longer fragments"
                 value={textToGenerate}
                 onChange={e => setTextToGenerate(e.target.value)}
               />
