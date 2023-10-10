@@ -67,15 +67,6 @@
 }
  
 @layer base {
-  *::-webkit-scrollbar {
-    display: none;
-  }
-  
-  * {
-    @apply border-border;
-    overflow: -moz-scrollbars-none;
-    scrollbar-width: none;
-  }
   
   body {
     @apply bg-background text-foreground;
